@@ -1,9 +1,10 @@
 import app from './app';
+import envConfig from './configs/environment.config';
 
-const PORT = process.env.PORT || 3000;
+const { host, port } = envConfig.app;
 
-const server = app.listen(PORT, () => {
-  console.info(`Server is running in: http://localhost:${PORT}`);
+const server = app.listen(port, () => {
+  console.info(`Server is running in: http://${host}:${port}`);
 });
 
 process.on('SIGINT', () => {
