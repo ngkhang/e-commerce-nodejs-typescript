@@ -1,20 +1,20 @@
-import express from "express";
-import logger from "morgan";
-import helmet from "helmet";
-import compression from "compression";
+import compression from 'compression';
+import express from 'express';
+import helmet from 'helmet';
+import logger from 'morgan';
 
 const app = express();
 
 // Initialize middlewares
-app.use(logger("dev"));
+app.use(logger('dev'));
 app.use(helmet());
 app.use(compression());
 
 // Initialize router
-app.get("/", (req, res) => {
-  return res.status(200).json({
-    message: "Initialized Router",
-  });
-});
+app.get('/', (req, res) =>
+  res.status(200).json({
+    message: 'Initialized Router',
+  }),
+);
 
 export default app;
