@@ -26,6 +26,18 @@ export default defineConfig(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.json',
+        },
+        node: {
+          paths: ['./src'],
+          extensions: ['.js', '.ts'],
+        },
+      },
+    },
   },
   {
     rules: {

@@ -12,21 +12,17 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
+    "paths": {
+      "@configs/*": ["src/configs/*"]
+    },
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "test",
-    "dist",
-    "**/*spec.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

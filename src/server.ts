@@ -1,5 +1,6 @@
+import envConfig from '@configs/environment.config';
+
 import app from './app';
-import envConfig from './configs/environment.config';
 
 const { host, port } = envConfig.app;
 
