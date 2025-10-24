@@ -13,7 +13,8 @@
     "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
-      "@configs/*": ["src/configs/*"]
+      "@configs/*": ["src/configs/*"],
+      "@helpers/*": ["src/helpers/*"]
     },
     "skipLibCheck": true,
     "strictNullChecks": true,

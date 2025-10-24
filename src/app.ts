@@ -3,6 +3,9 @@ import express from 'express';
 import helmet from 'helmet';
 import logger from 'morgan';
 
+// Initialize database
+import './dbs/initial.mongodb';
+
 const app = express();
 
 // Initialize middlewares
