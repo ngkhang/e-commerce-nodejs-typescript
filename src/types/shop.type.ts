@@ -18,5 +18,7 @@ export interface IShop {
 export type IShopSignUp = Pick<IShop, 'name' | 'password' | 'email'>;
 
 export interface IShopSignUpRes {
-  id: string;
+  shop: Pick<IShop, '_id' | 'name' | 'email'>;
+  accessToken: string;
+  refreshToken: string;
 }

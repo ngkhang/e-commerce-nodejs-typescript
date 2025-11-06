@@ -8,8 +8,8 @@ export const RoleShop = {
   WRITE: '002',
 };
 
-const MODEL_NAME = 'Shop';
-const COLLECTION_NAME = 'Shops';
+export const SHOP_MODEL_NAME = 'Shop';
+const SHOP_COLLECTION_NAME = 'Shops';
 
 const shopSchema = new Schema<IShop, Model<IShop>>(
   {
@@ -41,9 +41,9 @@ const shopSchema = new Schema<IShop, Model<IShop>>(
   },
   {
     timestamps: true,
-    collection: COLLECTION_NAME,
+    collection: SHOP_COLLECTION_NAME,
   },
 );
 
-const shopModel = model(MODEL_NAME, shopSchema);
+const shopModel = model(SHOP_MODEL_NAME, shopSchema);
 export default shopModel;

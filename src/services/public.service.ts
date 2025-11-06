@@ -1,5 +1,11 @@
+import * as crypto from 'crypto';
+
 import shopModel, { RoleShop } from 'src/models/shop.model';
+import { pickFields } from 'src/utils';
+import { generateTokenPair } from 'src/utils/jwt.util';
 import { hashPassword } from 'src/utils/password';
+
+import keyTokenService from './key-token.service';
 
 import type { ApiResult } from 'src/types/api.type';
 import type { IShopSignUp, IShopSignUpRes } from 'src/types/shop.type';
@@ -32,14 +38,38 @@ class PublicService {
         roles: [RoleShop.SHOP],
       });
 
+      // if (newShop) {
       // Generate token
+      const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem',
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem',
+        },
+      });
+
+      const publicKeyString = await keyTokenService.create({
+        userId: newShop._id,
+        publicKey,
+      });
+      if (publicKeyString.status === 'error') return publicKeyString;
+
+      const payload = { userId: newShop._id, email };
+
+      const tokens = generateTokenPair(payload, publicKeyString.data, privateKey);
+      if (tokens.status === 'error') return tokens;
 
       return {
         code: 201,
         message: 'Created a new shop successfully',
         status: 'success',
         data: {
-          id: String(newShop._id),
+          shop: pickFields(newShop, ['_id', 'name', 'email']),
+          ...tokens.data,
         },
       };
     } catch (error: unknown) {
