@@ -1,0 +1,22 @@
+import type { RoleShop } from 'src/models/shop.model';
+
+type IRoleShop = (typeof RoleShop)[keyof typeof RoleShop];
+type Status = 'active' | 'inactive';
+
+export interface IShop {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  status: Status;
+  verify: boolean;
+  roles: IRoleShop[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type IShopSignUp = Pick<IShop, 'name' | 'password' | 'email'>;
+
+export interface IShopSignUpRes {
+  id: string;
+}

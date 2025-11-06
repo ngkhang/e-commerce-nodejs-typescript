@@ -19,6 +19,7 @@
     "cm": "git-cz"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -31,6 +32,7 @@
     "@commitlint/config-conventional": "^20.0.0",
     "@commitlint/cz-commitlint": "^20.1.0",
     "@eslint/js": "^9.38.0",
+    "@types/bcrypt": "^6.0.0",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
