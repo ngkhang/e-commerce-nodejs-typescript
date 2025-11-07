@@ -15,7 +15,8 @@ interface TokenPair {
  * JWT signing options
  */
 const SIGN_OPTIONS: SignOptions = {
-  algorithm: 'RS256',
+  algorithm: 'HS256',
+  issuer: 'ngkhang-ecommerce',
 };
 
 /**
@@ -41,7 +42,7 @@ const TOKEN_EXPIRY = {
  */
 export const generateTokenPair = (payload: object, publicKey: string, privateKey: string): ApiResult<TokenPair> => {
   try {
-    const accessToken = jwt.sign(payload, privateKey, {
+    const accessToken = jwt.sign(payload, publicKey, {
       ...SIGN_OPTIONS,
       expiresIn: TOKEN_EXPIRY.ACCESS,
     });

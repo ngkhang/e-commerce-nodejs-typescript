@@ -38,29 +38,17 @@ class PublicService {
         roles: [RoleShop.SHOP],
       });
 
-      // if (newShop) {
-      // Generate token
-      const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 4096,
-        publicKeyEncoding: {
-          type: 'spki',
-          format: 'pem',
-        },
-        privateKeyEncoding: {
-          type: 'pkcs8',
-          format: 'pem',
-        },
-      });
+      const publicKey = crypto.randomBytes(64).toString('hex');
+      const privateKey = crypto.randomBytes(64).toString('hex');
 
-      const publicKeyString = await keyTokenService.create({
+      const keyStore = await keyTokenService.create({
         userId: newShop._id,
         publicKey,
+        privateKey,
       });
-      if (publicKeyString.status === 'error') return publicKeyString;
+      if (keyStore.status === 'error') return keyStore;
 
-      const payload = { userId: newShop._id, email };
-
-      const tokens = generateTokenPair(payload, publicKeyString.data, privateKey);
+      const tokens = generateTokenPair({ userId: newShop._id, email }, publicKey, privateKey);
       if (tokens.status === 'error') return tokens;
 
       return {
