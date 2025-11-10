@@ -1,10 +1,10 @@
+import { ForbiddenRequestError } from 'src/core/error.response';
 import apiKeyModel from 'src/models/api-key.model';
 
 import type { IApiKey } from 'src/types/api-key.type';
-import type { ApiResult } from 'src/types/api.type';
 
 class ApiKeyService {
-  public findById = async (key: string): Promise<ApiResult<IApiKey>> => {
+  public findById = async (key: string): Promise<IApiKey> => {
     const objectKey = await apiKeyModel
       .findOne({
         key,
@@ -12,21 +12,9 @@ class ApiKeyService {
       })
       .lean();
 
-    if (!objectKey) {
-      return {
-        code: 403,
-        status: 'error',
-        message: 'Forbidden Error',
-        data: null,
-      };
-    }
+    if (!objectKey) throw new ForbiddenRequestError('Forbidden Error');
 
-    return {
-      code: 200,
-      status: 'success',
-      message: 'Success',
-      data: objectKey,
-    };
+    return objectKey;
   };
 }
 

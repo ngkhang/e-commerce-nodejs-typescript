@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 
+import { ConflictRequestError } from 'src/core/error.response';
 import shopModel, { RoleShop } from 'src/models/shop.model';
 import { pickFields } from 'src/utils';
 import { generateTokenPair } from 'src/utils/jwt.util';
@@ -7,68 +8,42 @@ import { hashPassword } from 'src/utils/password';
 
 import keyTokenService from './key-token.service';
 
-import type { ApiResult } from 'src/types/api.type';
 import type { IShopSignUp, IShopSignUpRes } from 'src/types/shop.type';
 
 class PublicService {
-  public async signUp({ name, email, password }: IShopSignUp): Promise<ApiResult<IShopSignUpRes>> {
-    try {
-      // Check exist shop
-      const holderShop = await shopModel
-        .findOne({
-          email,
-        })
-        .lean()
-        .exec();
-
-      if (holderShop) {
-        return {
-          code: 409,
-          status: 'error',
-          message: 'Shop already registered!',
-          data: null,
-        };
-      }
-
-      //  Add new shop
-      const newShop = await shopModel.create({
-        name,
-        password: hashPassword(password),
+  public async signUp({ name, email, password }: IShopSignUp): Promise<IShopSignUpRes> {
+    // Check exist shop
+    const holderShop = await shopModel
+      .findOne({
         email,
-        roles: [RoleShop.SHOP],
-      });
+      })
+      .lean()
+      .exec();
 
-      const publicKey = crypto.randomBytes(64).toString('hex');
-      const privateKey = crypto.randomBytes(64).toString('hex');
+    if (holderShop) throw new ConflictRequestError('Shop already registered!');
 
-      const keyStore = await keyTokenService.create({
-        userId: newShop._id,
-        publicKey,
-        privateKey,
-      });
-      if (keyStore.status === 'error') return keyStore;
+    const newShop = await shopModel.create({
+      name,
+      password: hashPassword(password),
+      email,
+      roles: [RoleShop.SHOP],
+    });
 
-      const tokens = generateTokenPair({ userId: newShop._id, email }, publicKey, privateKey);
-      if (tokens.status === 'error') return tokens;
+    const publicKey = crypto.randomBytes(64).toString('hex');
+    const privateKey = crypto.randomBytes(64).toString('hex');
 
-      return {
-        code: 201,
-        message: 'Created a new shop successfully',
-        status: 'success',
-        data: {
-          shop: pickFields(newShop, ['_id', 'name', 'email']),
-          ...tokens.data,
-        },
-      };
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Unknown error occurred';
-      return {
-        code: 500,
-        message,
-        status: 'error',
-        data: null,
-      };
-    }
+    const keyStore = await keyTokenService.create({
+      userId: newShop._id,
+      publicKey,
+      privateKey,
+    });
+
+    const tokens = generateTokenPair({ userId: newShop._id, email }, keyStore.publicKey, keyStore.privateKey);
+
+    return {
+      shop: pickFields(newShop, ['_id', 'name', 'email']),
+      ...tokens,
+    };
   }
 }
 

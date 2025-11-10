@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 
+import { ErrorResponse } from 'src/core/error.response';
+
 import type { SignOptions } from 'jsonwebtoken';
-import type { ApiResult } from 'src/types/api.type';
 
 /**
  * Token pair returned after generation
@@ -40,7 +41,7 @@ const TOKEN_EXPIRY = {
  * // Returns: { accessToken: '', refreshToken: '' }
  * ```
  */
-export const generateTokenPair = (payload: object, publicKey: string, privateKey: string): ApiResult<TokenPair> => {
+export const generateTokenPair = (payload: object, publicKey: string, privateKey: string): TokenPair => {
   try {
     const accessToken = jwt.sign(payload, publicKey, {
       ...SIGN_OPTIONS,
@@ -53,20 +54,10 @@ export const generateTokenPair = (payload: object, publicKey: string, privateKey
     });
 
     return {
-      code: 200,
-      status: 'success',
-      message: 'Generate token pair successful',
-      data: {
-        accessToken,
-        refreshToken,
-      },
+      accessToken,
+      refreshToken,
     };
   } catch (error) {
-    return {
-      code: 500,
-      status: 'error',
-      message: error instanceof Error ? error.message : 'Unknown error',
-      data: null,
-    };
+    throw new ErrorResponse(error instanceof Error ? error.message : 'Unknown error');
   }
 };

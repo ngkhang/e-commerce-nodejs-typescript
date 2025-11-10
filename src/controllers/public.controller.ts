@@ -1,3 +1,4 @@
+import { CreatedResponse } from 'src/core/success.response';
 import publicService from 'src/services/public.service';
 
 import type { NextFunction, Request, Response } from 'express';
@@ -7,14 +8,13 @@ class PublicController {
   public signUp = async (
     req: Request<Record<string, never>, unknown, IShopSignUp>,
     res: Response,
-    next: NextFunction,
-  ): Promise<Response | void> => {
-    try {
-      const result = await publicService.signUp(req.body);
-      return res.status(result.code).json(result);
-    } catch (error) {
-      next(error);
-    }
+    _next: NextFunction,
+  ): Promise<Response> => {
+    const createdShop = await publicService.signUp(req.body);
+    return new CreatedResponse({
+      message: 'Created a new shop successfully',
+      data: createdShop,
+    }).send(res);
   };
 }
 
