@@ -61,3 +61,19 @@ export const generateTokenPair = (payload: object, publicKey: string, privateKey
     throw new ErrorResponse(error instanceof Error ? error.message : 'Unknown error');
   }
 };
+
+interface JwtPayload {
+  userId: string;
+  email: string;
+}
+
+type JwtDecodedPayload = Pick<jwt.JwtPayload, 'iat' | 'exp' | 'iss'> & JwtPayload;
+
+export const verifyToken = (token: string, publicKey: string): JwtDecodedPayload => {
+  try {
+    const decoded = jwt.verify(token, publicKey) as JwtPayload;
+    return decoded;
+  } catch (error) {
+    throw new ErrorResponse(error instanceof Error ? error.message : 'Unknown error');
+  }
+};

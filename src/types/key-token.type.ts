@@ -1,7 +1,7 @@
-import type { Schema } from 'mongoose';
+import type { Types } from 'mongoose';
 
 export interface IKeyToken {
-  userId: Schema.Types.ObjectId;
+  userId: Types.ObjectId;
   publicKey: string;
   privateKey: string;
   refreshTokensUsed: string[];
@@ -13,3 +13,12 @@ export interface ICreateKeyTokens extends Omit<IKeyToken, 'userId' | 'refreshTok
   refreshToken?: string;
 }
 export type IKeyTokensRes = Pick<IKeyToken, 'publicKey' | 'privateKey'>;
+
+export interface KeyTokenRes {
+  id: string;
+  userId: string;
+  publicKey: string;
+  privateKey: string;
+  refreshTokensUsed: string[];
+  refreshToken: string;
+}

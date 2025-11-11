@@ -80,6 +80,8 @@ class PublicService {
       ...tokens,
     };
   }
+
+  public logout = async (userId: string): Promise<boolean> => await keyTokenService.deleteByUserId(userId);
 }
 
 const publicService = new PublicService();

@@ -1,7 +1,9 @@
+import { Types } from 'mongoose';
+
 import keyTokenModel from 'src/models/key-token.model';
 import { pickFields } from 'src/utils';
 
-import type { ICreateKeyTokens, IKeyTokensRes } from 'src/types/key-token.type';
+import type { ICreateKeyTokens, IKeyTokensRes, KeyTokenRes } from 'src/types/key-token.type';
 
 class KeyTokenService {
   public create = async ({ userId, publicKey, privateKey, refreshToken }: ICreateKeyTokens): Promise<IKeyTokensRes> => {
@@ -24,6 +26,30 @@ class KeyTokenService {
       },
     );
     return pickFields(tokens, ['publicKey', 'privateKey']);
+  };
+
+  public findByUserId = async (userId: string): Promise<KeyTokenRes | null> => {
+    const result = await keyTokenModel
+      .findOne({
+        userId: new Types.ObjectId(userId),
+      })
+      .lean();
+
+    if (!result) return null;
+
+    return {
+      ...result,
+      id: result._id.toString(),
+      userId: result.userId.toString(),
+    };
+  };
+
+  public deleteByUserId = async (userId: string): Promise<boolean> => {
+    const { acknowledged } = await keyTokenModel.deleteOne({
+      userId: new Types.ObjectId(userId),
+    });
+
+    return acknowledged;
   };
 }
 
