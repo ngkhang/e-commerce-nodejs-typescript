@@ -13,6 +13,19 @@ interface TokenPair {
 }
 
 /**
+ * Custom JWT payload
+ */
+interface UserJwtPayload {
+  userId: string;
+  email: string;
+}
+
+/**
+ * Decoded JWT payload including standard JWT claims and custom user data
+ */
+type VerifiedJwtPayload = Pick<jwt.JwtPayload, 'iat' | 'exp' | 'iss'> & UserJwtPayload;
+
+/**
  * JWT signing options
  */
 const SIGN_OPTIONS: SignOptions = {
@@ -58,22 +71,26 @@ export const generateTokenPair = (payload: object, publicKey: string, privateKey
       refreshToken,
     };
   } catch (error) {
-    throw new ErrorResponse(error instanceof Error ? error.message : 'Unknown error');
+    throw new ErrorResponse(error instanceof Error ? error.message : 'Token generation failed');
   }
 };
 
-interface JwtPayload {
-  userId: string;
-  email: string;
-}
-
-type JwtDecodedPayload = Pick<jwt.JwtPayload, 'iat' | 'exp' | 'iss'> & JwtPayload;
-
-export const verifyToken = (token: string, publicKey: string): JwtDecodedPayload => {
+/**
+ * Verifies and decodes a JWT token using the provided public key
+ * @param token - The JWT token string to verify
+ * @param publicKey - The public key used for signature verification
+ * @returns The decoded JWT payload containing user data and standard claims
+ * @throws When token verification fails (invalid signature, expired, or malformed)
+ *
+ * @example
+ * ```typescript
+ * const payload = verifyToken(authToken, process.env.JWT_PUBLIC_KEY);
+ * console.log(payload.userId, payload.email);
+ */
+export const verifyToken = (token: string, publicKey: string): VerifiedJwtPayload => {
   try {
-    const decoded = jwt.verify(token, publicKey) as JwtPayload;
-    return decoded;
+    return jwt.verify(token, publicKey) as VerifiedJwtPayload;
   } catch (error) {
-    throw new ErrorResponse(error instanceof Error ? error.message : 'Unknown error');
+    throw new ErrorResponse(error instanceof Error ? error.message : 'Token verification failed');
   }
 };

@@ -1,4 +1,4 @@
-import { HEADER } from 'src/constants';
+import { REQUEST_HEADERS } from 'src/constants';
 import { AuthFailureError, NotFoundRequestError } from 'src/core/error.response';
 import { asyncHandlerError } from 'src/middlewares/handle-error.middleware';
 import keyTokenService from 'src/services/key-token.service';
@@ -10,9 +10,9 @@ import type { KeyTokenRes } from 'src/types/key-token.type';
 
 export const authentication = asyncHandlerError(
   async (req: Request & { keyStore?: KeyTokenRes }, _res: Response, next: NextFunction) => {
-    const userId = req.headers[HEADER.CLIENT_ID]?.toString();
+    const userId = req.headers[REQUEST_HEADERS.CLIENT_ID]?.toString();
 
-    // Check userId in Headers
+    // Check userId in REQUEST_HEADERS s
     if (!userId) throw new AuthFailureError('Not found userId');
 
     // Get accessToken
@@ -20,10 +20,10 @@ export const authentication = asyncHandlerError(
     if (!keyStore) throw new NotFoundRequestError('Not found keyStore');
 
     // Check accessToken is exist and verify token
-    const accessToken = req.headers[HEADER.AUTHORIZATION]?.toString();
+    const accessToken = req.headers[REQUEST_HEADERS.AUTHORIZATION]?.toString();
     if (!accessToken) throw new AuthFailureError('Not found access token');
 
-    // Compare userId in Header with jwt payload decoded
+    // Compare userId in REQUEST_HEADERS  with jwt payload decoded
     const decodedJwtPayload = verifyToken(accessToken, keyStore.publicKey);
     if (decodedJwtPayload.userId !== userId) throw new AuthFailureError('Invalid UserId');
 
