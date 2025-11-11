@@ -23,9 +23,13 @@ const keyTokenSchema = new Schema<IKeyToken, Model<IKeyToken>>(
       type: String,
       required: true,
     },
-    refreshToken: {
+    refreshTokensUsed: {
       type: [String],
       default: [],
+    },
+    refreshToken: {
+      type: String,
+      required: true,
     },
   },
   {

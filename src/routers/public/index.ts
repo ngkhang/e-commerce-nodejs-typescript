@@ -8,4 +8,7 @@ const publicRouter = express.Router();
 // Sign Up router
 publicRouter.post('/shop/sign-up', asyncHandlerError(publicController.signUp));
 
+// Log in router
+publicRouter.post('/shop/login', asyncHandlerError(publicController.login));
+
 export default publicRouter;

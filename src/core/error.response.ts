@@ -46,3 +46,11 @@ export class ForbiddenRequestError extends ErrorResponse {
     super(message ?? httpStatus[statusCode], status ?? statusCode);
   }
 }
+
+export class AuthFailureError extends ErrorResponse {
+  public readonly name = 'AuthFailureError';
+  constructor(message?: string, status?: number) {
+    const statusCode = httpStatus.UNAUTHORIZED;
+    super(message ?? httpStatus[statusCode], status ?? statusCode);
+  }
+}

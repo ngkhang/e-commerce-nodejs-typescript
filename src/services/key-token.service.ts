@@ -4,12 +4,25 @@ import { pickFields } from 'src/utils';
 import type { ICreateKeyTokens, IKeyTokensRes } from 'src/types/key-token.type';
 
 class KeyTokenService {
-  public create = async ({ userId, publicKey, privateKey }: ICreateKeyTokens): Promise<IKeyTokensRes> => {
-    const tokens = await keyTokenModel.create({
-      userId,
-      publicKey,
-      privateKey,
-    });
+  public create = async ({ userId, publicKey, privateKey, refreshToken }: ICreateKeyTokens): Promise<IKeyTokensRes> => {
+    const tokens = await keyTokenModel.findOneAndUpdate(
+      // Filter
+      {
+        userId,
+      },
+      // Update
+      {
+        publicKey,
+        privateKey,
+        refreshTokensUsed: [],
+        refreshToken,
+      },
+      // Options
+      {
+        upsert: true,
+        new: true,
+      },
+    );
     return pickFields(tokens, ['publicKey', 'privateKey']);
   };
 }
