@@ -44,6 +44,18 @@ class PublicController {
       },
     }).send(res);
   };
+
+  public refreshToken = async (
+    req: Request<Record<string, never>, unknown, { refreshToken: string }>,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<Response> => {
+    const data = await publicService.refreshToken(req.body.refreshToken);
+    return new OkResponse({
+      message: 'Refresh token is success',
+      data,
+    }).send(res);
+  };
 }
 
 const publicController = new PublicController();

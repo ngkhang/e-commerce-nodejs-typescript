@@ -16,7 +16,7 @@ class KeyTokenService {
       {
         publicKey,
         privateKey,
-        refreshTokensUsed: [],
+        // refreshTokensUsed: [],
         refreshToken,
       },
       // Options
@@ -45,11 +45,62 @@ class KeyTokenService {
   };
 
   public deleteByUserId = async (userId: string): Promise<boolean> => {
-    const { acknowledged } = await keyTokenModel.deleteOne({
+    const { acknowledged } = await keyTokenModel.deleteMany({
       userId: new Types.ObjectId(userId),
     });
 
     return acknowledged;
+  };
+
+  public findByRefreshTokenUsed = async (refreshToken: string): Promise<KeyTokenRes | null> => {
+    const result = await keyTokenModel
+      .findOne({
+        refreshTokensUsed: refreshToken,
+      })
+      .lean();
+
+    if (!result) return null;
+    return {
+      ...result,
+      id: result._id.toString(),
+      userId: result.userId.toString(),
+    };
+  };
+
+  public findByRefreshToken = async (refreshToken: string): Promise<KeyTokenRes | null> => {
+    const result = await keyTokenModel
+      .findOne({
+        refreshToken,
+      })
+      .lean();
+
+    if (!result) return null;
+    return {
+      ...result,
+      id: result._id.toString(),
+      userId: result.userId.toString(),
+    };
+  };
+
+  public updateRefreshTokenUsed = async (
+    userId: string,
+    newRefreshToken: string,
+    oldRefreshToken: string,
+  ): Promise<KeyTokenRes | null> => {
+    const result = await keyTokenModel.findOneAndUpdate(
+      {
+        userId: new Types.ObjectId(userId),
+      },
+      { $push: { refreshTokensUsed: oldRefreshToken }, $set: { refreshToken: newRefreshToken } },
+    );
+
+    if (!result) return null;
+
+    return {
+      ...result,
+      id: result._id.toString(),
+      userId: result.userId.toString(),
+    };
   };
 }
 

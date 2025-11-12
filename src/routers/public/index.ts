@@ -17,4 +17,7 @@ publicRouter.use(authentication);
 // Logout router
 publicRouter.post('/shop/logout', asyncHandlerError(publicController.logout));
 
+// Refresh token router
+publicRouter.post('/shop/refresh-token', asyncHandlerError(publicController.refreshToken));
+
 export default publicRouter;
